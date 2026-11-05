@@ -1,0 +1,144 @@
+% ==================================================================
+% PART 2: Preamble building blocks for the declaration of independent
+%         work of the University of Vechta (form version 25-02-26)
+%
+% Included in main.tex AFTER \usepackage[T1]{fontenc} / babel /
+% geometry / setspace / graphicx and BEFORE \begin{document}:
+%
+%     \input{chapters/00_examples/doiw_preamble}
+%
+% Required packages: iftex, xcolor, eso-pic, setspace, graphicx, geometry
+% (all standard in TeX Live / MiKTeX).
+% ==================================================================
+
+\usepackage{iftex}
+\usepackage{pgfkeys}   % key-value input for the AI documentation
+\usepackage{xcolor}
+\usepackage{eso-pic}   % absolute positioning of the logos
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{geometry}
+
+% --- Path to the logos (folder images/logos/vechta/) ---------------
+\newcommand{\ekBilder}{images/logos/vechta/}
+
+% --- File with your own signature (PNG/JPG/PDF) --------------------
+% Save your signature as images/sign/your_sign.png (ignored by Git).
+% If this file is missing, the dummy signature
+% images/sign/example_sign.png is used.
+% If that is missing too, the space stays empty.
+\newcommand{\ekUnterschriftDatei}{images/sign/your_sign.png}
+\IfFileExists{images/sign/your_sign.png}{}{%
+  \renewcommand{\ekUnterschriftDatei}{images/sign/example_sign.png}}
+\newcommand{\ekUnterschriftHoehe}{30pt}
+
+% --- Colour: red of the University of Vechta logo ------------------
+\definecolor{UniVechtaRot}{RGB}{193,12,37}
+
+% --- Font of the form (Calibri, Carlito as fallback) ---------------
+% Only used via \eksfont; the main font of your paper is not affected.
+\makeatletter
+\ifPDFTeX
+  \IfFileExists{carlito.sty}{%
+    \let\eks@oldsf\sfdefault
+    \usepackage[sfdefault]{carlito}%
+    \edef\eks@sf{\sfdefault}%
+    \let\sfdefault\eks@oldsf
+    \newcommand{\eksfont}{\fontfamily{\eks@sf}\selectfont}%
+  }{%
+    \newcommand{\eksfont}{\sffamily}% Fallback ohne Carlito
+  }
+\else
+  \usepackage{fontspec}
+  \IfFontExistsTF{Calibri}{\newfontfamily\eksfont{Calibri}}{%
+    \IfFontExistsTF{Carlito}{\newfontfamily\eksfont{Carlito}}{%
+      \newcommand{\eksfont}{\sffamily}}}
+\fi
+
+% --- Link (clickable if hyperref is loaded) ------------------------
+\newcommand{\eksLink}[2]{%
+  \@ifpackageloaded{hyperref}{\href{#1}{\textcolor{blue}{\underline{#2}}}}%
+    {\textcolor{blue}{\underline{#2}}}}
+\makeatother
+
+% --- Checkbox (11 pt square, 0.7 pt line as in the original) -------
+\newcommand{\ekBox}{%
+  \raisebox{-1.6pt}[0pt][0pt]{\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.7pt}%
+  \fbox{\rule{0pt}{9.6pt}\rule{9.6pt}{0pt}}}\hspace{2.9pt}}
+
+% --- Line for handwritten entries ----------------------------------
+\newcommand{\ekLinie}[1]{\rule[-1.4pt]{#1}{0.55pt}}
+
+% --- Ticked checkbox (same size as \ekBox, with an X) --------------
+\newcommand{\ekBoxX}{%
+  \raisebox{-1.6pt}[0pt][0pt]{\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.7pt}%
+  \fbox{\makebox[9.6pt][c]{\rule{0pt}{9.6pt}\raisebox{1.7pt}{\sffamily\bfseries\fontsize{8.5pt}{9pt}\selectfont X}}}}\hspace{2.9pt}}
+
+% --- Text on a line: \ekFeld{minimum width}{text} -------------------
+% Empty text gives an empty line for handwriting;
+% longer text extends the line automatically.
+\newlength{\ekTmp}
+\newlength{\ekTmpB}
+\newcommand{\ekFeld}[2]{%
+  \settowidth{\ekTmp}{#2}%
+  \ifdim\ekTmp<\dimexpr#1-6pt\relax\setlength{\ekTmp}{#1}\else\addtolength{\ekTmp}{6pt}\fi
+  \makebox[\ekTmp][l]{\rlap{\ekLinie{\ekTmp}}\hspace{3pt}#2}}
+
+% --- Date and place: \ekDatumOrt{Vechta, 05.11.2026} ----------------
+% Appears to the left of the signature. Without it the place stays
+% empty and the layout matches the original form.
+\def\ekDatumOrtText{}% \def instead of \newcommand, so that \ifx\empty works
+\newcommand{\ekDatumOrt}[1]{\def\ekDatumOrtText{#1}}
+
+% --- Entry field "Sonstiges und zwar: ____" up to width #1 ---------
+% #2 = text (leave empty for an empty line)
+\newcommand{\ekSonstiges}[2]{%
+  \settowidth{\ekTmpB}{Sonstiges und zwar:\ }%
+  \hbox to #1{Sonstiges und zwar:\ \ekFeld{\dimexpr#1-\ekTmpB\relax}{#2}\hss}}
+
+% --- AI block: \ekKIBlock{name and version}{keys} --------------------
+% Keys (comma-separated, all optional):
+%   struktur, redaktion, recherche-literatur, recherche-inhalte,
+%   visualisierung, uebersetzung, sonstiges={text}
+\pgfkeys{
+  /ekki/.is family, /ekki,
+  struktur/.code={\def\ekBoxStruktur{\ekBoxX}},
+  redaktion/.code={\def\ekBoxRedaktion{\ekBoxX}},
+  recherche-literatur/.code={\def\ekBoxRechLit{\ekBoxX}},
+  recherche-inhalte/.code={\def\ekBoxRechInh{\ekBoxX}},
+  visualisierung/.code={\def\ekBoxVisual{\ekBoxX}},
+  uebersetzung/.code={\def\ekBoxUebers{\ekBoxX}},
+  sonstiges/.code={\def\ekBoxSonst{\ekBoxX}\def\ekTextSonst{#1}},
+}
+\newcommand{\ekKIBlock}[2]{%
+  \begingroup\setlength{\parskip}{0pt}%
+  \def\ekBoxStruktur{\ekBox}\def\ekBoxRedaktion{\ekBox}%
+  \def\ekBoxRechLit{\ekBox}\def\ekBoxRechInh{\ekBox}%
+  \def\ekBoxVisual{\ekBox}\def\ekBoxUebers{\ekBox}%
+  \def\ekBoxSonst{\ekBox}\def\ekTextSonst{}%
+  \pgfkeys{/ekki/.cd,#2}%
+  \noindent Name und Version des Modells bzw. der Anwendung:\par
+  \vspace{4.1pt}\noindent\ekFeld{128pt}{#1}\par
+  \vspace{10.5pt}\noindent Art der Verwendung:\par
+  \vspace{6pt}%
+  \begingroup\fontsize{11pt}{12.5pt}\selectfont
+  \noindent\hspace{0.6pt}\ekBoxStruktur Strukturell (Ideen/Aufbau der Arbeit)\par
+  \noindent\hspace{0.6pt}\ekBoxRedaktion Redaktionelle Überarbeitung\par
+  \noindent\hspace{0.6pt}\ekBoxRechLit Recherche (Literatur)\par
+  \noindent\hspace{0.6pt}\ekBoxRechInh Recherche (Inhalte)\par
+  \noindent\hspace{0.6pt}\ekBoxVisual Visualisierung\par
+  \noindent\hspace{0.6pt}\ekBoxUebers Übersetzung\par
+  \noindent\hspace{0.6pt}\ekBoxSonst\ekSonstiges{202.5pt}{\ekTextSonst}\par
+  \endgroup\endgroup}
+
+% --- Header/footer elements of the two pages (absolute, in pt from
+%     the upper left page corner; measured from the original PDF) ----
+\newcommand{\ekLogoUni}[2]{% #1 = x, #2 = y of the lower edge
+  \AtPageUpperLeft{\put(#1,-#2){\includegraphics[width=143.28pt]{\ekBilder logo_uni}}}}
+\newcommand{\ekLogoAudit}{%
+  \AtPageUpperLeft{\put(75.64,-814.76){\includegraphics[width=54.48pt]{\ekBilder logo_audit}}}}
+
+% --- Text settings for the two pages (11 pt on 14.4 pt) -----------
+\newcommand{\ekText}{\eksfont\setstretch{1}\fontsize{11pt}{14.4pt}\selectfont%
+  \setlength{\parindent}{0pt}\setlength{\parskip}{14pt}%
+  \hyphenpenalty=10000 \exhyphenpenalty=10000 \sloppy\frenchspacing}

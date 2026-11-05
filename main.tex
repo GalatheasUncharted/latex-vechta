@@ -1,0 +1,99 @@
+% !BIB program = biber
+% ==================================================================
+% main.tex: packages, settings and imports only.
+% Write your content in cover/ and chapters/, not here.
+% Lines marked "ADJUST" are the ones you may want to change.
+% ==================================================================
+\documentclass[12pt,a4paper,oneside]{article}
+
+% --- Language and encoding ---------------------------------------
+% ADJUST: change ngerman to english for an English paper.
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{csquotes}
+
+% --- Bibliography and citation style -----------------------------
+% Own styles live in styles/<subject>/ (see README).
+% ADJUST: style=history_vechta for history; other subjects follow.
+\makeatletter
+\def\input@path{{styles/history/}{styles/english/}}
+\makeatother
+\usepackage[backend=biber,style=history_vechta]{biblatex}
+\addbibresource{sources/lib.bib}
+\setlength\bibitemsep{12pt}
+
+% No URLs, DOIs or ISBNs in footnotes (full data is in the bibliography)
+\AtEveryCitekey{%
+  \clearfield{url}%
+  \clearfield{urldate}%
+  \clearfield{doi}%
+  \clearfield{isbn}%
+  \clearfield{note}%
+}
+
+% --- Page layout -------------------------------------------------
+% ADJUST: margins and line spacing as required by your lecturer.
+\usepackage[left=2.5cm,right=3.5cm,top=2.5cm,bottom=2.5cm,headheight=18pt]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Font --------------------------------------------------------
+% ADJUST: Times-like font (Leitfaden); the size is set in \documentclass.
+\usepackage{mathptmx}
+
+% --- Typography --------------------------------------------------
+% Justified text with hyphenation
+\usepackage[protrusion=true,expansion=true]{microtype}
+\setlength{\emergencystretch}{1.5em}
+
+% Footnotes: 10 pt (Leitfaden)
+\usepackage{footmisc}
+\renewcommand{\footnotesize}{\fontsize{10pt}{12pt}\selectfont}
+\interfootnotelinepenalty=10000
+
+% --- Graphics ----------------------------------------------------
+\usepackage{graphicx}
+
+% --- Declaration of authorship: building blocks ------------------
+% (logos, colours, fillable fields; see README)
+\input{chapters/00_examples/doiw_preamble}
+
+% --- Running head: section title left, page number right ---------
+\usepackage[automark,headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ihead{\leftmark}
+\ohead{\pagemark}
+\pagestyle{scrheadings}
+
+% --- Further packages --------------------------------------------
+% ADJUST: add your own packages here, e.g. booktabs/longtable for tables.
+
+% ==================================================================
+\begin{document}
+
+% Title page (edit cover/cover.tex), counted but without page number
+\input{cover/cover}
+
+% Table of contents, no page number
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+
+% Text starts here; one \input per chapter (each chapter has an index.tex)
+\newpage
+\pagestyle{scrheadings}
+\input{chapters/01_Introduction/index}
+\newpage
+\input{chapters/02_Main_Part/index}
+\newpage
+\input{chapters/03_Conclusion/index}
+\newpage
+
+% Sources and literature (split by Zotero tags, see README)
+\printhistorybibliography
+
+% Declaration of authorship (fill it in: chapters/00_examples/doiw.tex)
+\input{chapters/00_examples/doiw}
+
+\end{document}

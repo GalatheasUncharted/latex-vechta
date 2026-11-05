@@ -329,3 +329,15 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+# --- Template additions ---
+# Compiled output of the template itself
+main.pdf
+build/
+# Personal signature image (never commit your own signature)
+images/sign/*
+!images/sign/.gitkeep
+# Dummy signature shipped with the template
+!images/sign/example_sign.png
+# macOS
+.DS_Store

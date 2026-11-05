@@ -1,0 +1,117 @@
+\ProvidesFile{history_vechta.cbx}
+  [2026/11/05 v0.1 biblatex citation style: Geschichtswissenschaft, Universitaet Vechta]
+% ==================================================================
+% Zitierstil Geschichtswissenschaft, Universität Vechta
+% Grundlage: Leitfaden für wissenschaftliches Arbeiten in der
+% Geschichtswissenschaft an der Universität Vechta (ergänzt Januar 2026),
+% Abschnitt 2.3.2 "Fußnoten" (S. 14).
+%
+% Regeln (jede Fußnote ist ein Kurzbeleg, es gibt KEINE Erstnennung mit
+% Vollbeleg; die Vollangaben stehen nur im Verzeichnis):
+%   Familienname, Kurztitel, Seitenangabe.
+%   - Fußnote beginnt mit großem Buchstaben und endet mit Punkt.
+%   - "Ebd." bei gleichem Titel wie in der vorherigen Fußnote;
+%     gleiche Seite: nur "Ebd."; andere Seite: "Ebd., S. 22."
+%   - "Vgl." nur bei Verweis auf weiterführende Informationen
+%     (manuell im Zitierbefehl: \autocite[Vgl.][26-28]{schluessel}).
+%   - "a. a. O." und "ff." werden nicht verwendet; "f." nur für zwei
+%     aufeinander folgende Seiten (Eingabe: [S.~17f.]).
+% ==================================================================
+\RequireCitationStyle{authortitle-ibid}
+
+\ExecuteBibliographyOptions{%
+  autocite=footnote,
+  ibidtracker=constrict,
+  ibidpage=true,
+  uniquename=false,
+  uniquelist=false,
+  maxcitenames=3,
+  mincitenames=1,
+}
+
+% --- Trennzeichen -------------------------------------------------
+\DeclareDelimFormat{multinamedelim}{\addspace/\addspace}
+\DeclareDelimFormat{finalnamedelim}{\addspace/\addspace}
+\DeclareDelimFormat{andothersdelim}{\addspace}
+\DeclareDelimFormat{nametitledelim}{\addcomma\space}
+\DeclareDelimFormat{multicitedelim}{\addsemicolon\space}
+
+% --- Kurzbeleg: nur Familienname(n) --------------------------------
+\DeclareNameFormat{labelname}{%
+  \usebibmacro{name:delim}{\namepartfamily}%
+  \namepartfamily
+  \usebibmacro{name:andothers}}
+
+% Kurztitel ohne Hervorhebung (Leitfaden S. 14: "Pollak, Identität, S. 169.")
+\DeclareFieldFormat{citetitle}{#1}
+\DeclareFieldFormat[article,inbook,incollection,inproceedings,inreference,%
+  thesis,unpublished,online,artwork,misc,book,collection]{citetitle}{#1}
+
+% Fußnote endet immer mit Punkt (Leitfaden S. 14)
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}\adddot}
+\DeclareCiteCommand{\footcitetext}[\mkbibfootnotetext]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}\adddot}
+
+% --- Kurzbeleg-Makro: wie authortitle-ibid, aber "Ebd." auch am
+%     Seitenanfang (der Leitfaden schränkt "Ebd." nicht auf die Seite ein)
+% Warnung, wenn kein Kurztitel gepflegt ist (dann wird der volle Titel
+% verwendet; Leitfaden verlangt ein bis zwei sinnführende Substantive)
+\renewbibmacro*{cite:title}{%
+  \iffieldundef{shorttitle}
+    {\ifnameundef{shortauthor}
+       {\PackageWarning{history_vechta}%
+          {Kein Kurztitel (shorttitle) fuer \thefield{entrykey}; der volle Titel wird verwendet}}%
+       {}}%
+    {}%
+  \printtext[bibhyperref]{%
+    \printfield[citetitle]{labeltitle}}}
+
+% (siehe cite unten) Antike Quellen (Neuer Pauly): Ist shortauthor gesetzt und shorttitle
+% leer, besteht der Beleg nur aus der Autorabkuerzung; Werk und Stelle
+% stehen in der Klammer: \autocite[\stelle{paenit. 34}]{ambr} -> "Ambr. paenit. 34."
+\newbibmacro*{hist:antik}{%
+  \ifnameundef{shortauthor}
+    {\global\boolfalse{hist@antik}}
+    {\iffieldundef{shorttitle}
+       {\global\booltrue{hist@antik}}
+       {\global\boolfalse{hist@antik}}}}
+\newbool{hist@antik}
+
+\renewbibmacro*{cite}{%
+  \global\boolfalse{cbx:loccit}%
+  \usebibmacro{hist:antik}%
+  \iffieldundef{shorthand}
+    {\ifbool{hist@antik}
+       {\printnames{labelname}}
+       {\ifciteibid
+          {\usebibmacro{cite:ibid}}
+          {\printnames{labelname}%
+           \setunit*{\printdelim{nametitledelim}}%
+           \usebibmacro{cite:title}}}}%
+    {\usebibmacro{cite:shorthand}}}
+
+% --- Hilfsbefehl für Stellenangaben ohne "S." (z. B. antike Quellen):
+%     \autocite[\stelle{paenit. 34}]{ambr}  ->  "Ambr. paenit. 34."
+\newcommand*{\stelle}[1]{\mbox{#1}}
+
+% --- Texthilfen für Zitate (Leitfaden S. 13) ------------------------
+\newcommand*{\kuerzung}{[\dots]}
+\newcommand*{\sic}{[\textit{sic!}]}
+\newcommand*{\ergaenzung}[1]{[#1]}
+
+% --- Nachweis von KI-Nutzung (Leitfaden S. 19, Abschnitt 5.4) -------
+% \kinachweis{Tool und Version}{Anbieter}{Prompt}{Datum der Generierung}{URL}
+% Ergibt als Fußnote: Tool und Version. Anbieter: Prompt. Datum. URL.
+\newcommand*{\kinachweis}[5]{%
+  \footnote{#1.\space #2:\space #3.\space #4.\space #5.}}
+
+\endinput

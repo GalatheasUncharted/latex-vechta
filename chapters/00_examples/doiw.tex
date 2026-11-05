@@ -1,0 +1,86 @@
+% ==================================================================
+% PART 1: Declaration of independent work (page 1) and appendix
+%         "Dokumentation der verwendeten KI-Anwendungen" (page 2)
+%         University of Vechta, form version 25-02-26
+%
+% Included AFTER the bibliography:
+%     \input{chapters/00_examples/doiw}
+%
+% Requires the building blocks from doiw_preamble.tex.
+% ==================================================================
+
+% ------------------------------------------------------------------
+% FILL IN HERE (date and place, printed to the left of the signature):
+%   \ekDatumOrt{Vechta, 05.11.2026}
+%   or with the date of compilation: \ekDatumOrt{Vechta, \today}
+% Without it the place stays empty (as in the original).
+% ------------------------------------------------------------------
+%\ekDatumOrt{Vechta, \today}
+
+\clearpage
+\newgeometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm,nohead,nofoot}
+\thispagestyle{empty}
+\AddToShipoutPictureBG*{\ekLogoUni{70.96}{74.08}}
+\AddToShipoutPictureBG*{\ekLogoAudit}
+\AddToShipoutPictureBG*{\AtPageUpperLeft{\put(526.3,-762.4){\makebox(0,0)[br]{\eksfont\fontsize{10pt}{12pt}\selectfont Version 25-02-26}}}}
+
+\begingroup
+\ekText
+\vspace*{55pt}
+{\color{UniVechtaRot}\fontsize{14pt}{17pt}\selectfont Eigenständigkeitserklärung\par}
+\vspace{4.4pt}
+
+Hiermit versichere ich, dass ich die vorliegende Prüfungsleistung – sofern es sich um eine Prüfungsleistung als Produkt einer Gruppenarbeit handelt, meinen entsprechend gekennzeichneten Anteil – selbstständig verfasst und keine andere als die angegebenen Quellen und Hilfsmittel benutzt habe. Die Prüfungsleistung wurde in gleicher oder ähnlicher Form noch keiner anderen Prüfungsbehörde vorgelegt und von keiner anderen Prüfungsbehörde bereits als Teil einer Prüfung angenommen.
+
+Die vorliegende Prüfungsleistung ist meine Eigenleistung und ich trage die Verantwortung für die Auswahl aller Inhalte und die Qualität des Textes. Ich habe sichergestellt, dass Informationen und Argumente mit geeigneten wissenschaftlichen Quellen belegt bzw. gestützt werden. Die aus fremden Quellen direkt oder indirekt übernommenen Gedanken, Konzepte, Positionen, Grafiken usw. in meinen Ausführungen habe ich als solche eindeutig gekennzeichnet und mit vollständigen Verweisen auf die jeweilige Quelle versehen. Alle weiteren Inhalte dieser Prüfungsleistung (Textteile, Abbildungen, Tabellen etc.) ohne entsprechende Verweise auf fremde Quellen stammen von mir.
+
+Ich bestätige zudem, dass ich Künstliche Intelligenz (KI)-basierte Anwendungen ausschließlich zu dem Zweck verwendet habe, deren Nutzung ausdrücklich von der prüfenden Person genehmigt wurde. Ich verantworte die Übernahme jeglicher von mir verwendeter durch KI generierter Inhalte vollumfänglich selbst und dokumentiere im Anhang, zu welchem Zweck ich welche Anwendung eingesetzt habe. Zudem habe ich KI-Anwendungen nur in dem Umfang verwendet, dass meine Eigenleistung gewahrt\linebreak bleibt.
+
+Ich versichere, dass die digitale und die analoge Fassung dieser Arbeit übereinstimmen.
+
+\vspace{45.2pt}
+% --- Signature: images/sign/your_sign.png (or example_sign.png as fallback) is inserted
+%     automatically above the line (see \ekUnterschriftDatei in the preamble).
+\noindent\ifx\ekDatumOrtText\empty\else\ekFeld{112pt}{\ekDatumOrtText}\hspace{14pt}\fi
+\makebox[112pt][l]{%
+  \raisebox{0pt}[0pt][0pt]{\rlap{\hspace{4pt}\IfFileExists{\ekUnterschriftDatei}{%
+    \raisebox{-2pt}{\includegraphics[height=\ekUnterschriftHoehe,keepaspectratio]{\ekUnterschriftDatei}}}{}}}%
+  \ekLinie{112pt}}\par
+\vspace{-14.4pt}\noindent Datum, Ort und Unterschrift\par
+\endgroup
+
+% ------------------------------------------------------------------
+% Page 2: Appendix, documentation of AI applications
+% ------------------------------------------------------------------
+\clearpage
+\thispagestyle{empty}
+\AddToShipoutPictureBG*{\ekLogoUni{56.76}{76.84}}
+\AddToShipoutPictureBG*{\ekLogoAudit}
+\AddToShipoutPictureBG*{\AtPageUpperLeft{\put(524.7,-44.2){\makebox(0,0)[br]{\eksfont\fontsize{7pt}{8pt}\selectfont Seite 2 / 2}}}}
+
+\begingroup
+\ekText
+\vspace*{55pt}
+{\color{UniVechtaRot}\fontsize{14pt}{17pt}\selectfont Anhang: Dokumentation der verwendeten KI-Anwendungen\par}
+\vspace{1.9pt}
+
+{\itshape Nutzungshinweis: Die vorliegende Dokumentation ist hier als Kopiervorlage beispielhaft dargestellt und entsprechend der eigenen Nutzung anzupassen. Alternative Dokumentationsmöglichkeiten finden sich Sie unter „KI-Gebrauch im Studienkontext dokumentieren“ (\eksLink{https://doi.org/10.48548/pubdata-1476}{https://doi.org/10.48548/pubdata-1476}) und sind vorab mit dem*der Prüfer*in abzusprechen.\par}
+
+% ------------------------------------------------------------------
+% FILL IN HERE (digitally instead of by hand):
+%   \ekKIBlock{name and version}{keys for the kind of use}
+% Example:
+%   \ekKIBlock{ChatGPT 5.2 (OpenAI)}{redaktion, recherche-literatur}
+%   \ekKIBlock{Claude Sonnet 5.5 (Anthropic)}{struktur, sonstiges={Proofreading}}
+% Available keys: struktur, redaktion, recherche-literatur,
+%   recherche-inhalte, visualisierung, uebersetzung, sonstiges={text}
+% Empty braces {}{} leave the block for filling in by hand.
+% If you did not use any AI, leave both blocks empty.
+% ------------------------------------------------------------------
+\vspace{25.8pt}
+\ekKIBlock{}{}
+\vspace{23.9pt}
+\ekKIBlock{}{}
+\endgroup
+
+\restoregeometry

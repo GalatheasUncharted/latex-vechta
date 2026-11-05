@@ -1,8 +1,8 @@
-# latex-vechta
-
 A LaTeX template for academic papers at the University of Vechta.
 
 This repository provides a ready-to-use template for writing term papers, seminar papers and theses at the University of Vechta with LaTeX. It contains the complete page layout, starting with the cover page, as well as citation styles that are adapted to the requirements of the individual departments (for example History or English Studies).
+
+> **Notice, declaration of independent work:** the declaration and the documentation of the AI applications you used are filled in digitally, directly in LaTeX. You do not have to print, fill in by hand, sign and scan anything. Open `chapters/00_examples/doiw.tex`, scroll to the bottom and follow the instructions in [Filling in the declaration digitally](#filling-in-the-declaration-digitally). Whether your examiner accepts a digitally completed declaration has to be clarified with them and the examination office beforehand.
 
 > **Status:** work in progress. The structure described below is the target layout; not all parts are available yet.
 
@@ -12,6 +12,7 @@ This repository provides a ready-to-use template for writing term papers, semina
 - Separate cover page (`cover/cover.tex`) that can be edited without touching the rest of the document.
 - Department-specific citation styles for `biblatex`, selectable with a single line in `main.tex`.
 - Example chapter and example declaration of independent work as a starting point.
+- Declaration of independent work (official form of the University of Vechta) that is filled in digitally, including checkboxes, free text and an image of your signature.
 - Bibliography management with Zotero (see below), so that no references have to be typed by hand.
 
 ## Repository structure
@@ -24,9 +25,10 @@ latex-vechta/
 ├── cover/
 │   └── cover.tex             Cover page
 ├── chapters/
-│   ├── 00_examples/          Shipped examples (delete when you start)
+│   ├── 00_examples/          Example chapter and declaration of independent work
 │   │   ├── example_chapter.tex
-│   │   └── doiw.tex          Declaration of independent work
+│   │   ├── doiw.tex          Declaration of independent work
+│   │   └── doiw_preamble.tex Packages and settings for doiw.tex
 │   ├── 01_Introduction/      Example: your first chapter
 │   │   ├── index.tex         Only imports the subsections below
 │   │   ├── preface.tex
@@ -41,8 +43,8 @@ latex-vechta/
 │       └── ...
 ├── images/
 │   ├── logos/
-│   │   └── vechta/           University logos
-│   └── sign/                 Your own signature (image)
+│   │   └── vechta/           University logos (logo_uni.pdf, logo_audit.pdf)
+│   └── sign/                 Your signature (your_sign.png), dummy: example_sign.png
 └── styles/
     ├── history/              Citation style for History Studies
     │   ├── history_vechta.bbx
@@ -67,6 +69,72 @@ latex-vechta/
 3. Put your personal data (title, name, student ID, module, lecturer) into `cover/cover.tex`.
 4. Write your chapters in the `chapters/` folder and import them in `main.tex` (see [Structuring your chapters](#structuring-your-chapters)).
 5. Compile in this order: LaTeX, Biber, LaTeX, LaTeX (TeXstudio does this automatically with the "Build & View" command when Biber is configured).
+
+## Filling in the declaration digitally
+
+The declaration of independent work (`chapters/00_examples/doiw.tex`) follows the official form of the University of Vechta (version 25-02-26) and is imported at the end of `main.tex`. Its packages and settings are loaded from `chapters/00_examples/doiw_preamble.tex`. Page 1 is the declaration itself, page 2 is the documentation of the AI applications you used ("Anhang: Dokumentation der verwendeten KI-Anwendungen").
+
+### 1. Signature
+
+Put an image of your signature (PNG, JPG or PDF) into `images/sign/` and name it `your_sign.png`. It is placed above the signature line on page 1 (height 30 pt). The file is ignored by Git, so your signature is not committed by accident.
+
+The template ships with a dummy signature, `images/sign/example_sign.png`. It is used only as long as `your_sign.png` does not exist. **Before you hand in your work, make sure that your own signature is used** (or that you sign by hand), because otherwise the dummy signature "Student" appears in the PDF. If neither file exists, the space above the line stays empty.
+
+### 2. Documenting AI applications
+
+Open `chapters/00_examples/doiw.tex` and scroll to the bottom. There are two blocks, one for each application you used (as in the official form):
+
+```latex
+\ekKIBlock{Name and version of the application}{keys for the kind of use}
+```
+
+The first argument is the name and version of the model or application as free text, the second argument is a comma-separated list of keys. Both arguments may be empty.
+
+Example:
+
+```latex
+\ekKIBlock{ChatGPT 5.2 (OpenAI)}{redaktion, recherche-literatur}
+\ekKIBlock{Claude Sonnet 5.5 (Anthropic)}{struktur, sonstiges={Proofreading}}
+```
+
+Available keys for the kind of use (each key ticks the matching checkbox of the form):
+
+| Key | Checkbox in the form (wording of the form in parentheses) |
+| --- | --- |
+| `struktur` | Structural: ideas and outline of the paper (*Strukturell (Ideen/Aufbau der Arbeit)*) |
+| `redaktion` | Editorial revision (*Redaktionelle Überarbeitung*) |
+| `recherche-literatur` | Research: literature (*Recherche (Literatur)*) |
+| `recherche-inhalte` | Research: content (*Recherche (Inhalte)*) |
+| `visualisierung` | Visualisation (*Visualisierung*) |
+| `uebersetzung` | Translation (*Übersetzung*) |
+| `sonstiges={text}` | Other, namely: *text* (*Sonstiges und zwar*; ticks the box and writes your text on the line) |
+
+Rules:
+
+- Use the key names exactly as written above (lowercase, `ue` instead of `ü`).
+- Combine as many keys as you need, separated by commas.
+- For `sonstiges`, put the text in curly braces, so that it may contain commas: `sonstiges={Proofreading, spell checking}`.
+- Leave a block empty with `\ekKIBlock{}{}` if you want to fill it in by hand. The template ships with two empty blocks.
+- If you did not use any AI application, leave both blocks empty.
+- A long application name makes the line longer automatically.
+
+### 3. Date and place
+
+Date and place are set at the top of `chapters/00_examples/doiw.tex` with one command:
+
+```latex
+\ekDatumOrt{Vechta, 05.11.2026}
+```
+
+Remove the `%` in front of the prepared example line and adapt it. Use `\ekDatumOrt{Vechta, \today}` if the date of compilation should be inserted automatically. The text is printed on a line to the left of the signature; the label below the line reads "Datum, Ort und Unterschrift" (date, place and signature; the wording of the official form is kept in German). Without this command the place stays empty and the layout is identical to the official form, so that you can write date and place by hand.
+
+### Summary: what you can fill in
+
+| What | Where | How |
+| --- | --- | --- |
+| Signature | `images/sign/` | Save the image as `your_sign.png` |
+| Date and place | top of `doiw.tex` | `\ekDatumOrt{Vechta, 05.11.2026}` |
+| AI application 1 and 2 | bottom of `doiw.tex` | `\ekKIBlock{Name and version}{keys}` |
 
 ## Structuring your chapters
 
@@ -145,6 +213,37 @@ Copy the citation key of an entry and use it in your text with the citation comm
 
 In the Zotero settings (*Export*, *Quick Copy*) you can choose a Better BibTeX format, so that *Ctrl+Shift+C* (macOS: *Cmd+Shift+C*) on a selected entry copies a ready-made citation command.
 
+### 6. Citation style and bibliography structure (history)
+
+The style `history_vechta` (in `styles/history/`) implements the Leitfaden für wissenschaftliches Arbeiten in der Geschichtswissenschaft an der Universität Vechta (version January 2026). It is loaded in `main.tex` with `style=history_vechta`. Places where the Leitfaden is inconsistent are marked with `RÜCKFRAGE DEKANAT` in the style files.
+
+**Footnotes.** The first citation of a work is already a short citation (`Pollak, Identität, S. 169.`), as required by the Leitfaden. Repeated citations become `Ebd.`; `\autocite[Vgl.][26-28]{key}` gives `Vgl. ...`.
+
+**Short title (required).** Every entry needs a short title, otherwise the full title is used and the compiler prints a warning. In Zotero fill the field **Short Title** (one or two meaningful nouns, for example `Identität`). Better BibTeX exports it as `shorttitle`.
+
+**Short author for ancient sources (optional).** For ancient authors cited according to the abbreviations of *Der Neue Pauly* (DNP) leave *Short Title* empty and set the author abbreviation instead. In Zotero put this line into the **Extra** field:
+
+```
+tex.shortauthor: Ambr.
+```
+
+Work and passage then go into the optional argument: `\autocite[\stelle{paenit. 34}]{ambr}` gives `Ambr. paenit. 34.` (no `S.`; the abbreviations of authors and works are taken from the DNP list of abbreviations, they are not generated automatically).
+
+**Splitting the bibliography.** `\printhistorybibliography` prints *Quellen* (ungedruckte, gedruckte), *Literatur* and *Bildquellen* as separate sections; empty sections are omitted. The assignment is done with Zotero tags, which Better BibTeX exports as `keywords`:
+
+| Zotero tag | Section |
+| --- | --- |
+| `quelle-ungedruckt` | Quellen, Ungedruckte Quellen (archival material) |
+| `quelle-gedruckt` | Quellen, Gedruckte Quellen (editions, source collections) |
+| `bildquelle` | Bildquellen |
+| *(no tag)* | Literatur |
+
+If you only use `\nocite{*}`, call `\histAlleAbschnitte` before `\printhistorybibliography`. Headings can be changed with `\renewcommand{\histTitelLiteratur}{...}` (and `\histTitelQuellen`, `\histTitelUngedruckt`, `\histTitelGedruckt`, `\histTitelBilder`).
+
+**Entry types.** Use the matching Zotero item type: book, book section (Aufsatz im Sammelband), journal article, newspaper article, encyclopedia article (Lexikonartikel), thesis, web page, blog post, manuscript (archival material), artwork (image source). Details and the fields that are evaluated are documented at the top of `styles/history/history_vechta.bbx`.
+
+**Helpers for the text.** `\kuerzung` gives `[...]`, `\sic` gives `[sic!]`, `\ergaenzung{text}` gives `[text]`, and `\kinachweis{Tool}{Provider}{Prompt}{Date}{URL}` creates the footnote documenting the use of AI tools.
+
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [MIT License](LICENSE). The logos in `images/logos/vechta/` and the text of the declaration of independent work belong to the University of Vechta and are not covered by this license.

@@ -1,0 +1,501 @@
+\ProvidesFile{history_vechta.bbx}
+  [2026/11/05 v0.1 biblatex bibliography style: Geschichtswissenschaft, Universitaet Vechta]
+% ==================================================================
+% Literatur- und Quellenverzeichnis, Geschichtswissenschaft, Universität Vechta
+% Grundlage: Leitfaden für wissenschaftliches Arbeiten in der
+% Geschichtswissenschaft an der Universität Vechta (ergänzt Januar 2026),
+% Abschnitt 1 "Literatur- und Quellenrecherche, Nachweis von Abbildungen"
+% (S. 3 bis 9) und Abschnitt 2.2 (S. 12).
+%
+% Allgemeine Regeln:
+%   - Namen: "Familienname, Vorname"; mehrere Namen und Orte mit " / "
+%     getrennt; höchstens drei, sonst nach dem ersten Namen "u. a.".
+%     Namenszusatz steht hinten: "Brandt, Ahasver von".
+%   - Titel und Untertitel mit Punkt getrennt, keine Hervorhebung.
+%   - Kein Verlag; Erscheinungsort(e) und Erscheinungsjahr.
+%   - Auflage nur ab der zweiten, ausgeschrieben ("4., durchges. Auflage").
+%   - Seitenspannen mit Bindestrich (S. 23-35).
+%   - Wiederholte Namen werden nicht durch Striche ersetzt.
+%
+% Eingabe der Daten (Zotero mit Better BibLaTeX, siehe README):
+%   @book         Monographie, auch Quelle als selbständige Druckschrift
+%   @collection   Sammelband (Herausgeber im Feld "editor")
+%   @incollection Aufsatz im Sammelband; Einzelquelle in Quellensammlung
+%   @inreference  Lexikonartikel (Spalten: pagination = {column})
+%   @article      Zeitschriftenaufsatz; Zeitung mit entrysubtype = {newspaper}
+%   @thesis       Qualifikationsschrift (type = {Diss})
+%   @online       Fachportal, Blog (entrysubtype = {blog}), Online-Zeitung
+%   @unpublished  Archivalie (library = Archiv, number = Signatur)
+%   @artwork      Abbildung / Bildquelle
+% Zuordnung zu den Verzeichnissen über "keywords" (Zotero-Tags):
+%   quelle-ungedruckt | quelle-gedruckt | bildquelle
+%   alle übrigen Einträge gelten als Forschungsliteratur.
+% ==================================================================
+\RequireBibliographyStyle{standard}
+
+\ExecuteBibliographyOptions{%
+  sorting=nty,
+  maxbibnames=3,
+  minbibnames=1,
+  maxitems=3,
+  minitems=1,
+  isbn=false,
+  doi=false,
+  eprint=false,
+  url=true,
+}
+
+% --- Zeichenketten ------------------------------------------------
+% Hinweis: \DefineBibliographyStrings erwartet pro Eintrag EINEN Wert (kein Lang/Kurz-Paar).
+\DefineBibliographyStrings{german}{%
+  editor     = {Hg\adddot},
+  editors    = {Hg\adddot},
+  andothers  = {u\adddot\addnbspace a\adddot},
+  edition    = {Auflage},
+}
+% Seitenspannen mit Bindestrich (Leitfaden: "S. 23-35")
+\DefineBibliographyExtras{german}{\protected\def\bibrangedash{-}}
+\DefineBibliographyExtras{ngerman}{\protected\def\bibrangedash{-}}
+
+% --- Trennzeichen -------------------------------------------------
+\DeclareDelimFormat{multinamedelim}{\addspace/\addspace}
+\DeclareDelimFormat{finalnamedelim}{\addspace/\addspace}
+\DeclareDelimFormat{andothersdelim}{\addspace}
+\DeclareDelimFormat{multilistdelim}{\addspace/\addspace}
+\DeclareDelimFormat{finallistdelim}{\addspace/\addspace}
+
+% --- Namensformate ------------------------------------------------
+% "Familienname, Vorname Namenszusatz" (Brandt, Ahasver von)
+\DeclareNameFormat{default}{%
+  \usebibmacro{name:delim}{\namepartfamily}%
+  \namepartfamily
+  \ifdefempty{\namepartgiven}{}{\addcomma\space \namepartgiven}%
+  \ifdefempty{\namepartprefix}{}{\addspace\namepartprefix}%
+  \ifdefempty{\namepartsuffix}{}{\addcomma\space\namepartsuffix}%
+  \usebibmacro{name:andothers}}
+
+% "Vorname Familienname" (nur Abbildungsnachweise, Leitfaden S. 9)
+\DeclareNameFormat{hist:vorname-nachname}{%
+  \usebibmacro{name:delim}{\namepartfamily}%
+  \ifdefempty{\namepartgiven}{}{\namepartgiven\addspace}%
+  \ifdefempty{\namepartprefix}{}{\namepartprefix\addspace}%
+  \namepartfamily
+  \ifdefempty{\namepartsuffix}{}{\addcomma\space\namepartsuffix}%
+  \usebibmacro{name:andothers}}
+
+% --- Feldformate --------------------------------------------------
+\DeclareFieldFormat{title}{#1}
+\DeclareFieldFormat[article,inbook,incollection,inproceedings,inreference,%
+  thesis,unpublished,online,artwork,misc]{title}{#1}
+\DeclareFieldFormat{booktitle}{#1}
+\DeclareFieldFormat{journaltitle}{#1}
+\DeclareFieldFormat{titleaddon}{#1}
+\DeclareFieldFormat{edition}{%
+  \ifinteger{#1}{#1\adddot}{#1}\addspace\bibstring{edition}}
+\DeclareFieldFormat{url}{URL\addcolon\space\url{#1}}
+\DeclareFieldFormat{urldate}{\mkbibparens{#1}}
+\DeclareFieldFormat{origlanguage}{\bibcpsstring{#1}}
+% Artikel im Lexikon: Art. „Titel“
+\DeclareFieldFormat[inreference]{title}{Art\adddot\addspace\mkbibquote{#1}}
+
+% --- Datumsformate: TT.MM.JJJJ -------------------------------------
+\newbibmacro*{hist:date}{%
+  \iffieldundef{year}
+    {}
+    {\iffieldundef{day}
+       {\iffieldundef{month}
+          {\printfield{year}}
+          {\printtext{\mkdatezeros{\thefield{month}}.\thefield{year}}}}
+       {\printtext{\mkdatezeros{\thefield{day}}.\mkdatezeros{\thefield{month}}.\thefield{year}}}}}
+
+% --- Bausteine ----------------------------------------------------
+% Autor, bei Büchern ohne Autor Herausgeber mit "(Hg.)"
+\newbibmacro*{hist:names}{%
+  \ifnameundef{author}
+    {\ifnameundef{editor}
+       {}
+       {\printnames{editor}%
+        \addspace\printtext{(\bibstring{editor})}%
+        \setunit{\addcolon\space}}}
+    {\printnames{author}%
+     \setunit{\addcolon\space}}}
+
+% nur Autor (für Aufsatz, Artikel, ...); Herausgeber folgt nach "In:"
+\newbibmacro*{hist:author}{%
+  \ifnameundef{author}
+    {}
+    {\printnames{author}%
+     \setunit{\addcolon\space}}}
+
+\newbibmacro*{hist:title}{%
+  \printfield{title}%
+  \setunit{\subtitlepunct}%
+  \printfield{subtitle}%
+  \newunit}
+
+\newbibmacro*{hist:container}{%
+  \printtext{\bibstring{in}\addcolon\space}%
+  \ifnameundef{editor}
+    {}
+    {\printnames{editor}%
+     \addspace\printtext{(\bibstring{editor})}%
+     \setunit{\addcolon\space}}%
+  \printfield{booktitle}%
+  \setunit{\subtitlepunct}%
+  \printfield{booksubtitle}%
+  \newunit}
+
+% neuere Edition einer Quelle: "Hg. von ..." (Leitfaden S. 7)
+\newbibmacro*{hist:editor-von}{%
+  \ifnameundef{author}
+    {}
+    {\ifnameundef{editor}
+       {}
+       {\printtext{\bibstring{editor}\addspace von\addspace}%
+        \printnames{editor}%
+        \newunit}}}
+
+\newbibmacro*{hist:volume}{%
+  \printfield{volume}%
+  \newunit}
+
+\newbibmacro*{hist:place-year}{%
+  \printlist{location}%
+  \setunit*{\addspace}%
+  \printfield{year}}
+
+\newbibmacro*{hist:series}{%
+  \iffieldundef{series}
+    {}
+    {\setunit{\addspace}%
+     \printtext{\mkbibparens{=\addnbspace\printfield{series}%
+       \setunit*{\addspace}\printfield{number}}}}}
+
+% Übersetzung: [Franz. Original: Originaltitel, Erscheinungsjahr]
+\newbibmacro*{hist:translation}{%
+  \iffieldundef{origtitle}
+    {}
+    {\setunit{\addspace}%
+     \printtext{\mkbibbrackets{%
+       \iffieldundef{origlanguage}{}{\printfield{origlanguage}\addspace}%
+       Original\addcolon\space
+       \printfield{origtitle}%
+       \iffieldundef{origyear}{}{\addcomma\space\printfield{origyear}}}}}}
+
+\newbibmacro*{hist:url}{%
+  \iffieldundef{url}
+    {}
+    {\newunit
+     \printfield{url}%
+     \iffieldundef{urlyear}
+       {}
+       {\setunit*{\addspace}%
+        \printtext{\mkbibparens{%
+          \mkdatezeros{\thefield{urlday}}.\mkdatezeros{\thefield{urlmonth}}.\thefield{urlyear}}}}}}
+
+% ==================================================================
+% Eintragstypen
+% ==================================================================
+
+% --- Monographie (S. 4); Quelle als selbständige Druckschrift (S. 7) ---
+% Name: Haupttitel. Untertitel. Auflage. Ort(e) Jahr. [Übersetzung]
+\DeclareBibliographyDriver{book}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:names}%
+  \usebibmacro{hist:title}%
+  \usebibmacro{hist:volume}%
+  \printfield{edition}%
+  \newunit
+  \usebibmacro{hist:editor-von}%
+  \usebibmacro{hist:place-year}%
+  \usebibmacro{hist:series}%
+  \usebibmacro{hist:translation}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Sammelband (S. 5) --------------------------------------------
+% Name (Hg.): Haupttitel. Untertitel. Auflage, Ort(e) Jahr.
+% RÜCKFRAGE DEKANAT: Das Schema des Leitfadens (S. 5) setzt nach "Auflage"
+% ein Komma ("... Auflage, Erscheinungsort(e) Erscheinungsjahr"), bei der
+% Monographie (S. 4) dagegen einen Punkt. Hier wie im Leitfaden
+% übernommen; Beispiele ohne Auflage zeigen keinen Unterschied.
+\DeclareBibliographyDriver{collection}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:names}%
+  \usebibmacro{hist:title}%
+  \usebibmacro{hist:volume}%
+  \printfield{edition}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{hist:place-year}%
+  \usebibmacro{hist:series}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Aufsatz in Sammelband (S. 5); Einzelquelle in Quellensammlung (S. 7) ---
+% Name: Titel. Untertitel. In: Name (Hg.): Titel. Untertitel. Auflage, Ort Jahr, S. x-y.
+% RÜCKFRAGE DEKANAT: Komma nach "Auflage" wie im Schema des Leitfadens (S. 5).
+\DeclareBibliographyDriver{incollection}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:author}%
+  \usebibmacro{hist:title}%
+  \usebibmacro{hist:container}%
+  \usebibmacro{hist:volume}%
+  \printfield{edition}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{hist:place-year}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Lexikonartikel (S. 5) ----------------------------------------
+% [Name]: Art. „Titel“. In: [Name (Hg.):] Haupttitel. Untertitel. Auflage, Bd. N, Ort Jahr, S. oder Sp.
+\DeclareBibliographyDriver{inreference}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:author}%
+  \printfield{title}%
+  \newunit
+  \usebibmacro{hist:container}%
+  \printfield{edition}%
+  \setunit{\addcomma\space}%
+  \printfield{volume}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{hist:place-year}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Zeitschrift (S. 5) und Zeitung (S. 6) ---------------------------
+% Zeitschrift: Name: Titel. Untertitel. In: Zeitschrift Jahrgang (Jahr), S. x-y.
+% Zeitung:     [Name:] Titel. In: Zeitung, Nr. 41 v. 13.10.1972, S. 57-59.
+\DeclareBibliographyDriver{article}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:author}%
+  \usebibmacro{hist:title}%
+  \printtext{\bibstring{in}\addcolon\space}%
+  \printfield{journaltitle}%
+  \iffieldequalstr{entrysubtype}{newspaper}
+    {\setunit{\addcomma\space}%
+     \printfield{titleaddon}%
+     \setunit{\addcomma\space}%
+     \iffieldundef{number}
+       {}
+       {\printtext{\bibstring{number}\addnbspace\thefield{number}%
+          \addspace v\adddot\addspace}%
+        \usebibmacro{hist:date}}%
+     \iffieldundef{number}
+       {\usebibmacro{hist:date}}
+       {}%
+     \setunit{\addcomma\space}%
+     \printfield{pages}}
+    {\setunit{\addspace}%
+     \printfield{volume}%
+     \setunit*{\addspace}%
+     \iffieldundef{year}{}{\printtext{\mkbibparens{\thefield{year}}}}%
+     \setunit{\addcomma\space}%
+     \printfield{pages}}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Qualifikationsschrift (S. 6, nur als Online-Fassung belegt) -----
+% Name: Titel. Untertitel. Diss, Universität Jahr. URL: ... (Datum).
+% RÜCKFRAGE DEKANAT: Das Beispiel des Leitfadens (S. 6) schreibt "Diss,"
+% ohne Punkt und ohne Schlusspunkt nach dem Zugriffsdatum; wie im
+% Leitfaden übernommen (Typ im Feld type, z. B. type = {Diss}).
+\DeclareBibliographyDriver{thesis}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:names}%
+  \usebibmacro{hist:title}%
+  \iffieldundef{type}
+    {\printlist{location}%
+     \setunit*{\addspace}%
+     \printfield{year}}
+    {\printfield{type}%
+     \setunit{\addcomma\space}%
+     \printlist{institution}%
+     \setunit*{\addspace}%
+     \printfield{year}}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Fachportal, Blog, Online-Zeitung (S. 6 und 7) -------------------
+% Name: Titel. Untertitel. Version: 2.0. In: Portal, 03.08.2017. URL: ... (Datum).
+% Blog: entrysubtype = {blog} -> "In: Titel des Blogs (Blog), Datum."
+% Ressort/Rubrik einer Online-Zeitung: im Feld titleaddon.
+% RÜCKFRAGE DEKANAT: Beim Online-Zeitungsartikel nennt das Schema (S. 7)
+% ", URL" nach dem Datum, das Beispiel dagegen ". URL:". Hier wie im
+% Beispiel übernommen (Punkt).
+\DeclareBibliographyDriver{online}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:author}%
+  \usebibmacro{hist:title}%
+  \iffieldundef{version}
+    {}
+    {\printtext{\bibstring{version}\addcolon\space\thefield{version}}%
+     \newunit}%
+  \iffieldundef{organization}
+    {}
+    {\printtext{\bibstring{in}\addcolon\space}%
+     \printlist{organization}%
+     \iffieldequalstr{entrysubtype}{blog}
+       {\addspace\printtext{\mkbibparens{Blog}}}
+       {}%
+     \iffieldundef{titleaddon}{}{\setunit{\addcomma\space}\printfield{titleaddon}}%
+     \setunit{\addcomma\space}%
+     \usebibmacro{hist:date}}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Archivalien (S. 7 und 8) ---------------------------------------
+% Archiv Bestand Aktennummer: Aktentitel.
+% oder (entrysubtype = {gesamtsignatur}):
+% Archiv, Gesamtsignatur: Titel des Schriftstücks oder Textsorte, Datierung.
+\DeclareBibliographyDriver{unpublished}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \printfield{library}%
+  \iffieldequalstr{entrysubtype}{gesamtsignatur}
+    {\setunit*{\addcomma\space}}
+    {\setunit*{\addspace}}%
+  \printfield{number}%
+  \setunit{\addcolon\space}%
+  \printfield{title}%
+  \iffieldundef{year}
+    {}
+    {\setunit{\addcomma\space}\usebibmacro{hist:date}}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Abbildungen / Bildquellen (S. 8 und 9) -------------------------
+% Künstler: Bildtitel (Jahr). Aufbewahrungsort. In: Hg. (Hg.): Titel. Ort Jahr, S. n.
+% oder online: ... Aufbewahrungsort. URL: ... (Datum).
+% Bildjahr im Feld origdate, wenn die Abbildung in einem Buch erschien
+% (Buchjahr dann in date), sonst im Feld date. Aufbewahrungsort: howpublished.
+% RÜCKFRAGE DEKANAT: Die Beispiele des Leitfadens nennen Künstler und
+% Herausgeber hier als "Vorname Nachname" (sonst "Familienname, Vorname")
+% und schreiben "München/Berlin" ohne Leerzeichen (sonst " / ").
+% Hier wie im Leitfaden übernommen, Orte aber einheitlich mit " / ".
+\DeclareBibliographyDriver{artwork}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \iffieldundef{author}
+    {}
+    {\printnames[hist:vorname-nachname]{author}%
+     \setunit{\addcolon\space}}%
+  \printfield{title}%
+  \iffieldundef{origyear}
+    {\iffieldundef{year}{}{\addspace\printtext{\mkbibparens{\thefield{year}}}}}
+    {\addspace\printtext{\mkbibparens{\thefield{origyear}}}}%
+  \newunit
+  \printfield{howpublished}%
+  \iffieldundef{booktitle}
+    {}
+    {\newunit
+     \printtext{\bibstring{in}\addcolon\space}%
+     \ifnameundef{editor}
+       {}
+       {\printnames[hist:vorname-nachname]{editor}%
+        \addspace\printtext{(\bibstring{editor})}%
+        \setunit{\addcolon\space}}%
+     \printfield{booktitle}%
+     \newunit
+     \usebibmacro{hist:place-year}%
+     \setunit{\addcomma\space}%
+     \printfield{pages}}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+% --- Fallback für alle übrigen Typen --------------------------------
+\DeclareBibliographyDriver{misc}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{hist:names}%
+  \usebibmacro{hist:title}%
+  \usebibmacro{hist:place-year}%
+  \usebibmacro{hist:url}%
+  \usebibmacro{finentry}}
+
+\DeclareBibliographyAlias{inbook}{incollection}
+\DeclareBibliographyAlias{inproceedings}{incollection}
+\DeclareBibliographyAlias{proceedings}{collection}
+\DeclareBibliographyAlias{mvbook}{book}
+\DeclareBibliographyAlias{mvcollection}{collection}
+\DeclareBibliographyAlias{bookinbook}{incollection}
+\DeclareBibliographyAlias{suppbook}{incollection}
+\DeclareBibliographyAlias{report}{book}
+\DeclareBibliographyAlias{manual}{book}
+\DeclareBibliographyAlias{booklet}{book}
+\DeclareBibliographyAlias{reference}{collection}
+\DeclareBibliographyAlias{mvreference}{collection}
+\DeclareBibliographyAlias{suppperiodical}{article}
+\DeclareBibliographyAlias{*}{misc}
+
+% ==================================================================
+% Aufteilung des Verzeichnisses: Quellen / Literatur / Bildquellen
+% Steuerung über das Feld "keywords" (in Zotero: Tags):
+%   quelle-ungedruckt, quelle-gedruckt, bildquelle
+% Einträge ohne diese Tags gelten als Literatur (nichts geht verloren).
+% Leere Abschnitte werden nicht ausgegeben.
+% ==================================================================
+\newtoggle{hist@q1}
+\newtoggle{hist@q2}
+\newtoggle{hist@lit}
+\newtoggle{hist@bild}
+
+\newcommand*{\hist@flag}{%
+  \ifkeyword{quelle-ungedruckt}{\global\toggletrue{hist@q1}}
+    {\ifkeyword{quelle-gedruckt}{\global\toggletrue{hist@q2}}
+       {\ifkeyword{bildquelle}{\global\toggletrue{hist@bild}}
+          {\global\toggletrue{hist@lit}}}}}
+\AtEveryCitekey{\hist@flag}
+% Bei \nocite{*} greift \AtEveryCitekey nicht: dann vor dem Verzeichnis
+% \histAlleAbschnitte aufrufen, damit alle vier Abschnitte erscheinen.
+\newcommand*{\histAlleAbschnitte}{%
+  \global\toggletrue{hist@q1}\global\toggletrue{hist@q2}%
+  \global\toggletrue{hist@lit}\global\toggletrue{hist@bild}}
+
+\defbibfilter{hist:q1}{keyword=quelle-ungedruckt}
+\defbibfilter{hist:q2}{keyword=quelle-gedruckt}
+\defbibfilter{hist:bild}{keyword=bildquelle}
+\defbibfilter{hist:lit}{%
+  not keyword=quelle-ungedruckt and not keyword=quelle-gedruckt
+  and not keyword=bildquelle}
+
+% Überschriften (anpassbar mit \renewcommand)
+\newcommand*{\histTitelVerzeichnis}{Quellen- und Literaturverzeichnis}
+\newcommand*{\histTitelQuellen}{Quellen}
+\newcommand*{\histTitelUngedruckt}{Ungedruckte Quellen}
+\newcommand*{\histTitelGedruckt}{Gedruckte Quellen}
+\newcommand*{\histTitelLiteratur}{Literatur}
+\newcommand*{\histTitelBilder}{Bildquellen}
+
+\defbibheading{hist:sub}{\subsection*{#1}}
+\defbibheading{hist:subsub}{\subsubsection*{#1}}
+
+% RÜCKFRAGE DEKANAT: Gliederungstiefe der Überschriften im Leitfaden
+% prüfen (hier: Verzeichnis = section, Quellen/Literatur/Bildquellen =
+% subsection, Ungedruckt/Gedruckt = subsubsection).
+\newcommand*{\printhistorybibliography}{%
+  \section*{\histTitelVerzeichnis}%
+  \addcontentsline{toc}{section}{\histTitelVerzeichnis}%
+  \ifboolexpr{togl {hist@q1} or togl {hist@q2}}
+    {\subsection*{\histTitelQuellen}%
+     \iftoggle{hist@q1}
+       {\printbibliography[heading=hist:subsub,title={\histTitelUngedruckt},filter=hist:q1]}{}%
+     \iftoggle{hist@q2}
+       {\printbibliography[heading=hist:subsub,title={\histTitelGedruckt},filter=hist:q2]}{}}
+    {}%
+  \iftoggle{hist@lit}
+    {\printbibliography[heading=hist:sub,title={\histTitelLiteratur},filter=hist:lit]}{}%
+  \iftoggle{hist@bild}
+    {\printbibliography[heading=hist:sub,title={\histTitelBilder},filter=hist:bild]}{}}
+
+\endinput
