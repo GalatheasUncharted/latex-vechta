@@ -66,7 +66,7 @@ latex-vechta/
    git clone https://github.com/GalatheasUncharted/latex-vechta.git
    ```
 2. Open `main.tex` in your editor and select the citation style for your department.
-3. Put your personal data (title, name, student ID, module, lecturer) into `cover/cover.tex`.
+3. Fill in the data block at the top of `cover/cover.tex` (course, lecturer, semester, title, name, student ID, degree programme, subject, term, university e-mail address). The fields follow the requirements for the title page in the Leitfaden.
 4. Write your chapters in the `chapters/` folder and import them in `main.tex` (see [Structuring your chapters](#structuring-your-chapters)).
 5. Compile in this order: LaTeX, Biber, LaTeX, LaTeX (TeXstudio does this automatically with the "Build & View" command when Biber is configured).
 

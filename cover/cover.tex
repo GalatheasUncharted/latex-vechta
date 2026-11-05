@@ -1,33 +1,58 @@
 % ============================================================
 % TITLE PAGE (imported by main.tex)
-% Replace everything in square brackets with your own data.
+% Fill in your data in the block below; the layout follows the
+% Leitfaden (Titelblatt): institution and subject, course with
+% lecturer and topic, semester, title, personal data, university
+% e-mail address. Everything in square brackets is a placeholder.
 % ============================================================
+
+% --- Your data (ADJUST) -------------------------------------
+\newcommand{\coverInstitution}{Universität Vechta}
+\newcommand{\coverFaculty}{Fakultät III}
+\newcommand{\coverSubject}{Studienfach Geschichtswissenschaft}
+\newcommand{\coverCourse}{[Name der Lehrveranstaltung]}
+\newcommand{\coverLecturer}{[Name der/des Lehrenden]}
+\newcommand{\coverCourseTopic}{[Thema der Lehrveranstaltung]}
+\newcommand{\coverSemester}{[Sommersemester/Wintersemester JJJJ(/JJ)]}
+\newcommand{\coverTitle}{[Titel der Arbeit]}
+\newcommand{\coverSubtitle}{[Untertitel der Arbeit]}
+\newcommand{\coverAuthor}{[Vorname Nachname]}
+\newcommand{\coverMatriculation}{[Matrikelnummer]}
+\newcommand{\coverDegree}{[Studiengang]}
+\newcommand{\coverMajor}{[Fach]}
+\newcommand{\coverTermNumber}{[X]}
+\newcommand{\coverEmail}{[Offizielle Universitäts-E-Mail-Adresse]}
+
+% --- Layout --------------------------------------------------
 \begin{titlepage}
-    \centering
+  \centering
 
-    \vspace*{4cm}
+  {\large \coverInstitution\par}
+  {\large \coverFaculty, \coverSubject\par}
 
-    {\LARGE\bfseries [Titel der Arbeit] \par}
-    {\normalsize
-    	[Untertitel der Arbeit]
-    	\par}
+  \vspace{1.5cm}
 
-    \vspace{3cm}
+  {\normalsize
+    Lehrveranstaltung: \coverCourse\\[0.3em]
+    Lehrende/r: \coverLecturer\\[0.3em]
+    Thema der Lehrveranstaltung: \coverCourseTopic\\[0.3em]
+    \coverSemester
+  \par}
 
-    {\normalsize
-    [Leitfrage oder Kurzbeschreibung der Arbeit]
+  \vspace{2.5cm}
 
-    \par}
+  {\LARGE\bfseries \coverTitle\par}
+  \vspace{0.4cm}
+  {\large \coverSubtitle\par}
 
-    \vfill
+  \vfill
 
-    {\normalsize
-
-        [Vorname Nachname]\\[0.3em]
-        Matrikelnummer: [Matrikelnummer]\\[0.3em]
-        Studiengang: [Studiengang]\\[0.3em]
-        Fach: [Fach, Modul], [X]. Fachsemester\\[0.3em]
-        [E-Mail-Adresse]
-    \par}
+  {\normalsize
+    \coverAuthor\\[0.3em]
+    Matrikelnummer: \coverMatriculation\\[0.3em]
+    Studiengang: \coverDegree\\[0.3em]
+    Fach: \coverMajor, \coverTermNumber.\ Fachsemester\\[0.3em]
+    \coverEmail
+  \par}
 
 \end{titlepage}
